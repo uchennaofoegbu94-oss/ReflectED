@@ -1,0 +1,12 @@
+-- Extends the existing generalized permission system (see
+-- 20260806045834_permission_system.sql) with a new grantable capability,
+-- following the same pattern used for every prior one: extend the enum,
+-- add the matching check wherever it's needed (Timetable.tsx, via
+-- useHasPermission('view_all_timetables')).
+--
+-- Backs the timetable role-scoping fix: by default only admin/principal
+-- can browse every class's and every teacher's timetable; a school can
+-- now delegate that same visibility to a specific staff member (e.g. a
+-- vice-principal or timetable coordinator) without making them a full
+-- admin.
+ALTER TYPE public.permission_key ADD VALUE IF NOT EXISTS 'view_all_timetables';
