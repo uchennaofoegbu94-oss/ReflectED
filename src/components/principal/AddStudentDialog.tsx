@@ -9,6 +9,7 @@ import { useClassArms } from '@/hooks/useClassArms';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
+import { describeEdgeFunctionError } from '@/lib/utils';
 import { StudentWithClass } from '@/hooks/useStudents';
 
 interface AddStudentDialogProps {
@@ -125,7 +126,7 @@ export function AddStudentDialog({ open, onOpenChange, student }: AddStudentDial
       
       onOpenChange(false);
     } catch (error: any) {
-      toast.error(error.message || 'Failed to save student');
+      toast.error(describeEdgeFunctionError(error, 'add this student'));
     } finally {
       setIsLoading(false);
     }

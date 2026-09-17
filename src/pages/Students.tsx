@@ -17,6 +17,7 @@ import {
   Trash2,
   UserPlus,
   Loader2,
+  RefreshCw,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -46,6 +47,7 @@ import { Database } from '@/integrations/supabase/types';
 import { AddStudentDialog } from '@/components/principal/AddStudentDialog';
 import { BulkImportStudentsDialog } from '@/components/principal/BulkImportStudentsDialog';
 import { toast } from 'sonner';
+import { describeEdgeFunctionError } from '@/lib/utils';
 
 type EnrollmentStatus = Database['public']['Enums']['enrollment_status'];
 
@@ -58,7 +60,7 @@ const statusColors: Record<EnrollmentStatus, string> = {
 
 export default function Students() {
   const { user } = useAuth();
-  const { data: students = [], isLoading } = useStudents();
+  const { data: students = [], isLoading, refetch: refetchStudents, isFetching } = useStudents();
   const { data: classArms = [] } = useClassArms();
   const deleteStudent = useDeleteStudent();
   
@@ -117,7 +119,7 @@ export default function Students() {
       toast.success('Student deleted successfully');
       setDeletingStudent(null);
     } catch (error: any) {
-      toast.error(error.message || 'Failed to delete student');
+      toast.error(describeEdgeFunctionError(error, 'delete this student'));
     }
   };
 
@@ -217,6 +219,15 @@ export default function Students() {
                 <SelectItem value="transferred">Transferred</SelectItem>
               </SelectContent>
             </Select>
+            <Button
+              variant="outline"
+              size="icon"
+              title="Refresh list"
+              onClick={() => refetchStudents()}
+              disabled={isFetching}
+            >
+              <RefreshCw size={18} className={isFetching ? 'animate-spin' : ''} />
+            </Button>
             <Button variant="outline" className="gap-2">
               <Download size={18} />
               Export

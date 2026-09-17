@@ -21,6 +21,7 @@ import {
   UserPlus,
   Loader2,
   Shield,
+  RefreshCw,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -47,6 +48,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
+import { describeEdgeFunctionError } from '@/lib/utils';
 
 const statusColors: Record<string, string> = {
   active: 'bg-success/10 text-success border-success/20',
@@ -56,7 +58,7 @@ const statusColors: Record<string, string> = {
 
 export default function Teachers() {
   const { user } = useAuth();
-  const { data: staff = [], isLoading } = useStaff();
+  const { data: staff = [], isLoading, refetch: refetchStaff, isFetching } = useStaff();
   const { data: specialRoles = [] } = useSpecialRoles();
   const deleteStaff = useDeleteStaff();
   
@@ -115,7 +117,7 @@ export default function Teachers() {
       toast.success('Teacher deleted successfully');
       setDeletingTeacher(null);
     } catch (error: any) {
-      toast.error(error.message || 'Failed to delete teacher');
+      toast.error(describeEdgeFunctionError(error, 'delete this teacher'));
     }
   };
 
@@ -209,6 +211,15 @@ export default function Teachers() {
                 <SelectItem value="on_leave">On Leave</SelectItem>
               </SelectContent>
             </Select>
+            <Button
+              variant="outline"
+              size="icon"
+              title="Refresh list"
+              onClick={() => refetchStaff()}
+              disabled={isFetching}
+            >
+              <RefreshCw size={18} className={isFetching ? 'animate-spin' : ''} />
+            </Button>
             <Button variant="outline" className="gap-2">
               <Download size={18} />
               Export

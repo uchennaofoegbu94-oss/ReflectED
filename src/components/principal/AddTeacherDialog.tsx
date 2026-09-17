@@ -8,6 +8,7 @@ import { useUpdateStaff, Staff } from '@/hooks/useStaff';
 import { supabase } from '@/integrations/supabase/client';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { describeEdgeFunctionError } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
 
 interface AddTeacherDialogProps {
@@ -121,7 +122,7 @@ export function AddTeacherDialog({ open, onOpenChange, teacher }: AddTeacherDial
         employeeId: '',
       });
     } catch (error: any) {
-      toast.error(error.message || 'Failed to save teacher');
+      toast.error(describeEdgeFunctionError(error, 'save this teacher'));
     } finally {
       setIsLoading(false);
     }
